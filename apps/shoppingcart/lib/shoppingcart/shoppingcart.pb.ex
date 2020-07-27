@@ -23,10 +23,10 @@ defmodule Shoppingcart.AddLineItem do
     )
   end
 
-  field :user_id, 1, type: :string
-  field :product_id, 2, type: :string
-  field :name, 3, type: :string
-  field :quantity, 4, type: :int32
+  field(:user_id, 1, type: :string)
+  field(:product_id, 2, type: :string)
+  field(:name, 3, type: :string)
+  field(:quantity, 4, type: :int32)
 end
 
 defmodule Shoppingcart.RemoveLineItem do
@@ -50,8 +50,8 @@ defmodule Shoppingcart.RemoveLineItem do
     )
   end
 
-  field :user_id, 1, type: :string
-  field :product_id, 2, type: :string
+  field(:user_id, 1, type: :string)
+  field(:product_id, 2, type: :string)
 end
 
 defmodule Shoppingcart.GetShoppingCart do
@@ -73,7 +73,7 @@ defmodule Shoppingcart.GetShoppingCart do
     )
   end
 
-  field :user_id, 1, type: :string
+  field(:user_id, 1, type: :string)
 end
 
 defmodule Shoppingcart.LineItem do
@@ -99,9 +99,9 @@ defmodule Shoppingcart.LineItem do
     )
   end
 
-  field :product_id, 1, type: :string
-  field :name, 2, type: :string
-  field :quantity, 3, type: :int32
+  field(:product_id, 1, type: :string)
+  field(:name, 2, type: :string)
+  field(:quantity, 3, type: :int32)
 end
 
 defmodule Shoppingcart.Cart do
@@ -123,7 +123,7 @@ defmodule Shoppingcart.Cart do
     )
   end
 
-  field :items, 1, repeated: true, type: Shoppingcart.LineItem
+  field(:items, 1, repeated: true, type: Shoppingcart.LineItem)
 end
 
 defmodule Shoppingcart.ShoppingCart.Service do
@@ -148,11 +148,11 @@ defmodule Shoppingcart.ShoppingCart.Service do
     )
   end
 
-  rpc :AddItem, Shoppingcart.AddLineItem, Google.Protobuf.Empty
+  rpc(:AddItem, Shoppingcart.AddLineItem, Google.Protobuf.Empty)
 
-  rpc :RemoveItem, Shoppingcart.RemoveLineItem, Google.Protobuf.Empty
+  rpc(:RemoveItem, Shoppingcart.RemoveLineItem, Google.Protobuf.Empty)
 
-  rpc :GetCart, Shoppingcart.GetShoppingCart, Shoppingcart.Cart
+  rpc(:GetCart, Shoppingcart.GetShoppingCart, Shoppingcart.Cart)
 end
 
 defmodule Shoppingcart.ShoppingCart.Stub do

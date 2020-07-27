@@ -21,9 +21,9 @@ defmodule Domain.LineItem do
     )
   end
 
-  field :productId, 1, type: :string
-  field :name, 2, type: :string
-  field :quantity, 3, type: :int32
+  field(:productId, 1, type: :string)
+  field(:name, 2, type: :string)
+  field(:quantity, 3, type: :int32)
 end
 
 defmodule Domain.ItemAdded do
@@ -45,7 +45,7 @@ defmodule Domain.ItemAdded do
     )
   end
 
-  field :item, 1, type: Domain.LineItem
+  field(:item, 1, type: Domain.LineItem)
 end
 
 defmodule Domain.ItemRemoved do
@@ -67,7 +67,7 @@ defmodule Domain.ItemRemoved do
     )
   end
 
-  field :productId, 1, type: :string
+  field(:productId, 1, type: :string)
 end
 
 defmodule Domain.Cart do
@@ -89,5 +89,5 @@ defmodule Domain.Cart do
     )
   end
 
-  field :items, 1, repeated: true, type: Domain.LineItem
+  field(:items, 1, repeated: true, type: Domain.LineItem)
 end
