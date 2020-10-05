@@ -11,6 +11,8 @@ defmodule CloudstateElixirSupport.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.11-dev",
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps()
     ]
   end
@@ -26,6 +28,7 @@ defmodule CloudstateElixirSupport.MixProject do
   defp deps do
     [
       # Base deps
+      {:ex_doc, ">= 0.0.0", only: :dev},
       {:flow, "~> 1.0"},
       {:google_protos, "~> 0.1.0"},
 
@@ -34,5 +37,20 @@ defmodule CloudstateElixirSupport.MixProject do
       # 2.9.0 fixes some important bugs, so it's better to use ~> 2.9.0
       {:cowlib, "~> 2.9.0", override: true}
     ]
+  end
+
+  defp description do
+    """
+    A few sentences (a paragraph) describing the project.
+    """
+  end
+
+  defp package do
+    [# These are the default files included in the package
+     name: :annotatable,
+     files: ["lib", "mix.exs", "README*"],
+     maintainers: ["Adriano Santos"],
+     licenses: ["Apache 2.0"],
+     links: %{"GitHub" => "https://github.com/mungotinae/elixir_support"}]
   end
 end
