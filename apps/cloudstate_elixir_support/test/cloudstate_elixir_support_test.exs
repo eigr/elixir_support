@@ -2,39 +2,39 @@ defmodule CloudstateElixirSupportTest do
   use ExUnit.Case
   doctest CloudstateElixirSupport
 
-  defmodule Example do
+  defmodule ShoppingCart do
     use Cloudstate.EventSourced
 
     @command true
-    def bar_method do end
+    def add_item do end
 
     @event [:test]
     @command true
-    def foo_bar_method do end
+    def item_added do end
 
-    def no_annotation_method do end
+    def convert do end
 
     @baz "ads"
     def undefined_annotation_method do end
   end
 
-  test "Example should contain single annotation if registered" do
-    assert Example.annotations.bar_method == [%{annotation: :command, value: true}]
+  test "ShoppingCart should contain single annotation if registered" do
+    assert ShoppingCart.annotations.add_item == [%{annotation: :command, value: true}]
   end
 
-  test "Example should contain multipule annotations if registered" do
-    assert Example.annotations.foo_bar_method == [%{annotation: :command, value: true},%{annotation: :event, value: [:test]}]
+  test "ShoppingCart should contain multipule annotations if registered" do
+    assert ShoppingCart.annotations.item_added == [%{annotation: :command, value: true},%{annotation: :event, value: [:test]}]
   end
 
-  test "Example should not contain annotations if undefined annotation on method" do
-    assert Example.annotations |> Map.has_key?(:undefined_annotation_method) == false
+  test "ShoppingCart should not contain annotations if undefined annotation on method" do
+    assert ShoppingCart.annotations |> Map.has_key?(:undefined_annotation_method) == false
   end
 
-  test "Example should not contain annotations in no annotations on method" do
-    assert Example.annotations |> Map.has_key?(:no_annotation_method) == false
+  test "ShoppingCart should not contain annotations in no annotations on method" do
+    assert ShoppingCart.annotations |> Map.has_key?(:convert) == false
   end
 
-  test "Example get methods annotated with command" do
-    assert Example.annotated_with(:command) == [:bar_method, :foo_bar_method]
+  test "ShoppingCart get methods annotated with command" do
+    assert ShoppingCart.annotated_with(:command) == [:add_item, :item_added]
   end
 end

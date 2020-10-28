@@ -1,5 +1,5 @@
 defmodule Cloudstate.EventSourced do
-    defmacro __using__(args) do
+    defmacro __using__(_args) do
         quote do
           def __on_annotation_(_) do
             quote do end
@@ -13,8 +13,8 @@ defmodule Cloudstate.EventSourced do
         end
     end
           
-    def __on_definition__(env, kind, name, args, guards, body) do
-        Module.get_attribute(env.module, :supported_annotations) |> Enum.each &annotate_method(&1, env.module, name)
+    def __on_definition__(env, _kind, name, _args, _guards, _body) do
+        Module.get_attribute(env.module, :supported_annotations) |> Enum.each(&annotate_method(&1, env.module, name))
     end
 
     def annotate_method(annotation, module, method) do
@@ -31,7 +31,7 @@ defmodule Cloudstate.EventSourced do
           Module.put_attribute(module, :annotations, annotations |> Map.put(method, method_annotations))
       end
     
-    defmacro __before_compile__(env) do
+    defmacro __before_compile__(_env) do
         quote do
           def annotations do
              @annotations
