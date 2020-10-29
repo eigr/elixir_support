@@ -18,7 +18,7 @@ defmodule Shoppingcart.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :cloudstate_elixir_support],
       mod: {Shoppingcart.Application, []}
     ]
   end

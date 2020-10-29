@@ -1,18 +1,19 @@
-defmodule Shoppingcart do
-  @moduledoc """
-  Documentation for `Shoppingcart`.
-  """
+defmodule Shoppingcart.Application do
+  @moduledoc false
+  use Application
 
-  @doc """
-  Hello world.
+  @impl true
+  def start(_type, _args) do
+    children = [
+      {CloudState.Supervisor,
+       %{
+         entity: ShoppingCart.Entity,
+         service_descriptor: Shoppingcart.ShoppingCart.Service,
+         domain_descriptors: [Domain.LineItem, Domain.ItemAdded, Domain.ItemRemoved, Domain.Cart]
+       }}
+    ]
 
-  ## Examples
-
-      iex> Shoppingcart.hello()
-      :world
-
-  """
-  def hello do
-    :world
+    opts = [strategy: :one_for_one, name: __MODULE__]
+    Supervisor.start_link(children, opts)
   end
 end

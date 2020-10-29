@@ -46,12 +46,14 @@ defmodule CloudstateElixirSupport.MixProject do
   end
 
   defp package do
-    [# These are the default files included in the package
-     name: :cloudstate,
-     organization: "Mungotinae",
-     files: ["lib", "mix.exs", "README*"],
-     maintainers: ["Adriano Santos", "Marcel Lanz"],
-     licenses: ["Apache 2.0"],
-     links: %{"GitHub" => "https://github.com/mungotinae/elixir_support"}]
+    # These are the default files included in the package
+    [
+      name: :cloudstate,
+      organization: "Mungotinae",
+      files: ["lib", "mix.exs", "README*"],
+      maintainers: ["Adriano Santos", "Marcel Lanz"],
+      licenses: ["Apache 2.0"],
+      links: %{"GitHub" => "https://github.com/mungotinae/elixir_support"}
+    ]
   end
 end

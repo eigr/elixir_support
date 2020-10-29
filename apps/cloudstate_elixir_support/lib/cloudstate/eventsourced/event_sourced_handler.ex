@@ -1,8 +1,7 @@
 defmodule CloudState.EventSourcedHandler do
-    use GenServer
+  use GenServer
 
-    def init(state) do
-        {:ok, state}
-    end
-    
+  def init(state) do
+    {:ok, state}
+  end
 end
