@@ -2,9 +2,18 @@ defmodule Cloudstate.EntityDiscoveryHandler do
     use GenServer
     alias Cloudstate.{EntitySpec,ServiceInfo}
 
+    def child_spec(opts) do
+        %{
+            id: __MODULE__, 
+            start: {__MODULE__, :start_link, [opts]}, 
+            type: :worker,
+            restart: :transient,
+        }
+    end
+
     # Client functions
-    def start_link(state) do
-        GenServer.start_link(__MODULE__, state)
+    def start_link(opts) do
+        GenServer.start_link(__MODULE__, opts)
     end
 
     def discover(pid, proxy_info) do

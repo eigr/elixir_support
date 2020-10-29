@@ -41,15 +41,16 @@ defmodule CloudstateElixirSupport.MixProject do
 
   defp description do
     """
-    A few sentences (a paragraph) describing the project.
+    Cloudstate Elixir Support offers an idiomatic support library for writing stateful services.
     """
   end
 
   defp package do
     [# These are the default files included in the package
-     name: :annotatable,
+     name: :cloudstate,
+     organization: "Mungotinae",
      files: ["lib", "mix.exs", "README*"],
-     maintainers: ["Adriano Santos"],
+     maintainers: ["Adriano Santos", "Marcel Lanz"],
      licenses: ["Apache 2.0"],
      links: %{"GitHub" => "https://github.com/mungotinae/elixir_support"}]
   end

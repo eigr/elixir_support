@@ -1,4 +1,4 @@
-defmodule CloudstateElixirSupport do
+defmodule CloudStateElixirSupport do
   @moduledoc """
   Documentation for `CloudstateElixirSupport`.
   """

@@ -1,4 +1,4 @@
-defmodule CloudstateElixirSupportTest do
+defmodule CloudStateElixirSupportTest do
   use ExUnit.Case
   doctest CloudstateElixirSupport
 
