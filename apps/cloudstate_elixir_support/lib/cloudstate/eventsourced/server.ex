@@ -1,2 +1,2 @@
-defmodule Cloudstate.EventSourced.Server do
+defmodule CloudState.EventSourced.Server do
 end

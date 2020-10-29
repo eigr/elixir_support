@@ -1,9 +1,9 @@
 defmodule CloudStateElixirSupportTest do
   use ExUnit.Case
-  doctest CloudstateElixirSupport
+  doctest CloudStateElixirSupport
 
   defmodule ShoppingCart do
-    use Cloudstate.EventSourced
+    use CloudState.EventSourced
 
     @command true
     def add_item do end

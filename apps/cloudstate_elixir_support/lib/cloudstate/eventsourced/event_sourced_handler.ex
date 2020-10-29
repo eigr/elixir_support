@@ -1,4 +1,4 @@
-defmodule Cloudstate.EventSourcedHandler do
+defmodule CloudState.EventSourcedHandler do
     use GenServer
 
     def init(state) do

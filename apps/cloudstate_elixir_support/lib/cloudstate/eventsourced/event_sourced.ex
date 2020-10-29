@@ -1,4 +1,4 @@
-defmodule Cloudstate.EventSourced do
+defmodule CloudState.EventSourced do
     defmacro __using__(_args) do
         quote do
           def __on_annotation_(_) do

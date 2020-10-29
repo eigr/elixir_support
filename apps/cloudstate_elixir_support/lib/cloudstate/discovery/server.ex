@@ -1,4 +1,4 @@
-defmodule Cloudstate.EntityDiscovery.Server do
+defmodule CloudState.EntityDiscovery.Server do
   use GRPC.Server, service: Cloudstate.EntityDiscovery.Service
   require Logger
   alias Cloudstate.EntityDiscoveryHandler

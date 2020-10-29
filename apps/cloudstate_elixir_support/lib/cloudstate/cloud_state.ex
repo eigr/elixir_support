@@ -2,15 +2,15 @@ defmodule CloudState.Supervisor do
     use Supervisor
 
     def start_link(opts) do
-        Supervisor.start_link(__MODULE__, :ok, opts)
+        Supervisor.start_link(__MODULE__, opts)
     end
     
     @impl true
-    def init(:ok) do
+    def init(opts) do
     children = [
-        Cloudstate.EntityDiscoveryHandler
+        {CloudState.EntityDiscoveryHandler, opts}
     ]
 
-    Supervisor.init(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one, name: __MODULE__)
     end
 end

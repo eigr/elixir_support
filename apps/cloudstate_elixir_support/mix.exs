@@ -41,7 +41,7 @@ defmodule CloudstateElixirSupport.MixProject do
 
   defp description do
     """
-    Cloudstate Elixir Support offers an idiomatic support library for writing stateful services.
+    CloudState Elixir Support offers an idiomatic support library for writing stateful services.
     """
   end
 

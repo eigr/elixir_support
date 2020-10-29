@@ -1,4 +1,4 @@
-defmodule Cloudstate.EntityDiscoveryHandler do
+defmodule CloudState.EntityDiscoveryHandler do
     use GenServer
     alias Cloudstate.{EntitySpec,ServiceInfo}
 

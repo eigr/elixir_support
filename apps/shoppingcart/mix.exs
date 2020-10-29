@@ -31,7 +31,8 @@ defmodule Shoppingcart.MixProject do
 
       # Grpc deps
       {:grpc, github: "elixir-grpc/grpc"},
-      {:cowlib, "~> 2.9.0", override: true}
+      {:cowlib, "~> 2.9.0", override: true},
+      {:cloudstate_elixir_support, in_umbrella: true}
     ]
   end
 end
