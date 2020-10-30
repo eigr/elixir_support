@@ -7,9 +7,11 @@ defmodule Shoppingcart.Application do
     children = [
       {CloudState.Supervisor,
        %{
+         name: "shoppingcart",
          entity: ShoppingCart.Entity,
-         service_descriptor: Shoppingcart.ShoppingCart.Service,
-         domain_descriptors: [Domain.LineItem, Domain.ItemAdded, Domain.ItemRemoved, Domain.Cart]
+         persistence_id: "shoppincart",
+         service: Shoppingcart.ShoppingCart.Service,
+         file_description_path: "priv/protos/shoppingcart/user-function.desc"
        }}
     ]
 

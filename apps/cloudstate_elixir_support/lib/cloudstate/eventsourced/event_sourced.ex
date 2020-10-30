@@ -6,6 +6,7 @@ defmodule CloudState.EventSourced do
         end
       end
 
+      @entity_type "cloudstate.eventsourced.EventSourced"
       @annotations %{}
       @supported_annotations unquote([:command, :event, :snapshot, :snapshot_handler])
       @on_definition {unquote(__MODULE__), :__on_definition__}
@@ -19,6 +20,8 @@ defmodule CloudState.EventSourced do
     Module.get_attribute(env.module, :supported_annotations)
     |> Enum.each(&annotate_method(&1, env.module, name))
   end
+
+  #def get_entity_type, do: Module.get_attribute(__MODULE__, :entity_type)
 
   def annotate_method(annotation, module, method) do
     annotations = Module.get_attribute(module, :annotations)
@@ -41,6 +44,8 @@ defmodule CloudState.EventSourced do
       def annotations do
         @annotations
       end
+
+      def get_entity_type, do: @entity_type
 
       def annotated_with(annotation) do
         methods = @annotations |> Map.keys()
