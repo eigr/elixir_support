@@ -4,6 +4,7 @@ defmodule CloudState.Endpoint do
   intercept(GRPC.Logger.Server)
 
   run([
-    CloudState.EntityDiscovery.Server
+    CloudState.EntityDiscovery.Server,
+    CloudState.EventSourced.Server
   ])
 end

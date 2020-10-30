@@ -1,6 +1,8 @@
 defmodule CloudState.Supervisor do
   use Supervisor
 
+  @event_sourced_registry :event_sourced_entities_registry
+
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts)
   end
@@ -11,7 +13,12 @@ defmodule CloudState.Supervisor do
     Application.put_env(:grpc, :start_server, true)
 
     children = [
+      # Discovery
       {CloudState.EntityDiscoveryHandler, opts},
+
+      #EventSourced
+      {CloudState.EventSourcedEntitySupervisor, [] },
+      {Registry, [keys: :unique, name: @event_sourced_registry]},
 
       # Last start GRPC Server
       {GRPC.Server.Supervisor,
