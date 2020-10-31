@@ -13,13 +13,23 @@ defmodule CloudState.Supervisor do
     Application.put_env(:grpc, :start_server, true)
     Application.put_env(:cloudstate_elixir_support, :register_options, opts, persistent: true)
 
-    children = [
-      # Discovery
-      {CloudState.EntityDiscoveryHandler, opts},
+    entities_childrens =
+      case opts.entity.get_entity_type do
+        "cloudstate.eventsourced.EventSourced" ->
+          [
+            {CloudState.EventSourcedEntitySupervisor, []},
+            {Registry, [keys: :unique, name: @event_sourced_registry]}
+          ]
+        
+        "cloudstate.action.ActionProtocol" -> 
+          []
+        
+        "cloudstate.crdt.Crdt" ->
+          []
+      end
 
-      # EventSourced
-      {CloudState.EventSourcedEntitySupervisor, []},
-      {Registry, [keys: :unique, name: @event_sourced_registry]},
+    children = entities_childrens ++ [
+      {CloudState.EntityDiscoveryHandler, opts},
 
       # Last start GRPC Server
       {GRPC.Server.Supervisor,
