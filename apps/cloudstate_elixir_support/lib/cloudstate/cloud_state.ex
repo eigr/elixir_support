@@ -20,22 +20,24 @@ defmodule CloudState.Supervisor do
             {CloudState.EventSourcedEntitySupervisor, []},
             {Registry, [keys: :unique, name: @event_sourced_registry]}
           ]
-        
-        "cloudstate.action.ActionProtocol" -> 
+
+        "cloudstate.action.ActionProtocol" ->
           []
-        
+
         "cloudstate.crdt.Crdt" ->
           []
       end
 
-    children = entities_childrens ++ [
-      {CloudState.EntityDiscoveryHandler, opts},
+    children =
+      entities_childrens ++
+        [
+          {CloudState.EntityDiscoveryHandler, opts},
 
-      # Last start GRPC Server
-      {GRPC.Server.Supervisor,
-       {CloudState.Endpoint,
-        Application.fetch_env!(:cloudsate_elixir_support, :server_port) || 8080}}
-    ]
+          # Last start GRPC Server
+          {GRPC.Server.Supervisor,
+           {CloudState.Endpoint,
+            Application.fetch_env!(:cloudsate_elixir_support, :server_port) || 8080}}
+        ]
 
     Supervisor.init(children, strategy: :one_for_one, name: __MODULE__)
   end
