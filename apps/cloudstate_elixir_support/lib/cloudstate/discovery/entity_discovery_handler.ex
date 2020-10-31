@@ -4,8 +4,8 @@ defmodule CloudState.EntityDiscoveryHandler do
   alias Protobuf.Encoder
   alias Cloudstate.{Entity, EntitySpec, ServiceInfo}
 
-  @service_name Atom.to_string(Mix.Project.config[:app])
-  @service_vsn Mix.Project.config[:version]
+  @service_name Atom.to_string(Mix.Project.config()[:app])
+  @service_vsn Mix.Project.config()[:version]
   @support_library_name "CloudState Elixir Support"
   @support_library_version Application.spec(:cloudstate_elixir_support, :vsn)
   @system_vsn elem(System.cmd("elixir", ["--version"]), 0)
@@ -48,9 +48,10 @@ defmodule CloudState.EntityDiscoveryHandler do
 
   defp create_entity_spec(proxy_info, opts) do
     EntitySpec.new(
-      proto: get_proto(opts), 
-      entities: create_entities(opts), 
-      service_info: get_service_info())
+      proto: get_proto(opts),
+      entities: create_entities(opts),
+      service_info: get_service_info()
+    )
   end
 
   defp get_service_info do
@@ -69,20 +70,22 @@ defmodule CloudState.EntityDiscoveryHandler do
   defp get_support_library_name, do: @support_library_name
   defp get_support_library_version, do: @support_library_version
   defp get_service_name(service), do: service |> service_name
-  
+
   defp create_entities(opts) do
-    Logger.debug("Options #{inspect opts}")
+    Logger.debug("Options #{inspect(opts)}")
     entity = opts.entity
+
     [
       Entity.new(
         entity_type: entity.get_entity_type(),
         service_name: get_service_name(opts.service),
-        persistence_id: opts.persistence_id || Atom.to_string(opts.entity))
+        persistence_id: opts.persistence_id || Atom.to_string(opts.entity)
+      )
     ]
   end
 
   defp get_proto(opts) do
-    path =  opts.file_description_path || @default_description_path
+    path = opts.file_description_path || @default_description_path
     result = File.read(path)
     elem(result, 1)
   end
@@ -91,5 +94,4 @@ defmodule CloudState.EntityDiscoveryHandler do
     module = service |> to_string() |> String.split(".") |> Enum.at(1)
     "#{module}.#{service.descriptor.name}"
   end
-
 end

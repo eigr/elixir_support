@@ -21,7 +21,7 @@ defmodule CloudState.EventSourced do
     |> Enum.each(&annotate_method(&1, env.module, name))
   end
 
-  #def get_entity_type, do: Module.get_attribute(__MODULE__, :entity_type)
+  # def get_entity_type, do: Module.get_attribute(__MODULE__, :entity_type)
 
   def annotate_method(annotation, module, method) do
     annotations = Module.get_attribute(module, :annotations)

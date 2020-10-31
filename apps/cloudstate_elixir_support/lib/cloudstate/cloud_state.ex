@@ -11,13 +11,14 @@ defmodule CloudState.Supervisor do
   def init(opts) do
     # This is a Hack to force the gRPC library to start as a server
     Application.put_env(:grpc, :start_server, true)
+    Application.put_env(:cloudstate_elixir_support, :register_options, opts, persistent: true)
 
     children = [
       # Discovery
       {CloudState.EntityDiscoveryHandler, opts},
 
-      #EventSourced
-      {CloudState.EventSourcedEntitySupervisor, [] },
+      # EventSourced
+      {CloudState.EventSourcedEntitySupervisor, []},
       {Registry, [keys: :unique, name: @event_sourced_registry]},
 
       # Last start GRPC Server
