@@ -1,62 +1,27 @@
 defmodule CloudState.EventSourced do
   defmacro __using__(_args) do
     quote do
-      def __on_annotation_(_) do
-        quote do
-        end
-      end
-
+      @behaviour CloudState.EventSourced
       @entity_type "cloudstate.eventsourced.EventSourced"
-      @annotations %{}
-      @supported_annotations unquote([:command, :event, :snapshot, :snapshot_handler])
-      @on_definition {unquote(__MODULE__), :__on_definition__}
       @before_compile {unquote(__MODULE__), :__before_compile__}
-      import CloudState.EventSourced
-      require CloudState.EventSourced
     end
-  end
-
-  def __on_definition__(env, _kind, name, _args, _guards, _body) do
-    Module.get_attribute(env.module, :supported_annotations)
-    |> Enum.each(&annotate_method(&1, env.module, name))
-  end
-
-  # def get_entity_type, do: Module.get_attribute(__MODULE__, :entity_type)
-
-  def annotate_method(annotation, module, method) do
-    annotations = Module.get_attribute(module, :annotations)
-    value = Module.get_attribute(module, annotation)
-    Module.delete_attribute(module, annotation)
-    update_annotations(annotation, annotations, module, method, value)
-  end
-
-  def update_annotations(_, _, _, _, nil), do: :no_op
-
-  def update_annotations(annotation, annotations, module, method, value) do
-    method_annotations =
-      Map.get(annotations, method, []) ++ [%{annotation: annotation, value: value}]
-
-    Module.put_attribute(module, :annotations, annotations |> Map.put(method, method_annotations))
   end
 
   defmacro __before_compile__(_env) do
     quote do
-      def annotations do
-        @annotations
-      end
-
       def get_entity_type, do: @entity_type
-
-      def annotated_with(annotation) do
-        methods = @annotations |> Map.keys()
-
-        methods
-        |> Enum.filter(fn method ->
-          Map.get(@annotations, method, [])
-          |> Enum.map(fn a -> a.annotation end)
-          |> Enum.member?(annotation)
-        end)
-      end
     end
   end
+
+  @callback init(state :: term) :: {:ok, new_state :: term} | {:error, reason :: term}
+
+  @callback handle_command(service :: term, request :: term, state :: term) ::
+              {:ok, result :: term, state :: term}
+              | {:emit, event :: term, result :: term, state :: term}
+              | {:emit, event :: term, forward :: term, result :: term, state :: term}
+              | {:error, reason :: term, state :: term}
+
+  @callback handle_event(event_type :: term, request :: term, state :: term) ::
+              {:ok, new_state :: term}
+              | {:error, reason :: term, state :: term}
 end

@@ -7,13 +7,16 @@ defmodule CloudState.EventSourced.Server do
   @spec handle(Cloudstate.Eventsourced.EventSourcedStreamIn.t(), GRPC.Server.Stream.t()) ::
           Cloudstate.Eventsourced.EventSourcedStreamOut.t()
   def handle(request, _stream) do
-    Enum.each(request, fn frame ->
-      case frame do
+    Enum.each(request, fn chunk ->
+      case chunk do
         %EventSourcedStreamIn{message: {:init, _}} ->
-          handle_init(elem(frame.message, 1))
+          handle_init(elem(chunk.message, 1))
 
         %EventSourcedStreamIn{message: {:command, _}} ->
-          handle_command(elem(frame.message, 1))
+          handle_command(elem(chunk.message, 1))
+
+        _ ->
+          Logger.info("No handler was found for this protocol message. Message #{chunk}")
       end
 
       # Send response
@@ -23,7 +26,7 @@ defmodule CloudState.EventSourced.Server do
 
   defp handle_init(message) do
     Logger.info("Incoming Init message #{inspect(message)}")
-    instance = message |> get_instance
+    instance = message |> get_instance_id
 
     args = %{
       instance: instance,
@@ -36,9 +39,10 @@ defmodule CloudState.EventSourced.Server do
 
   defp handle_command(message) do
     Logger.info("Incoming Command message #{inspect(message)}")
-    instance = message |> get_instance
-    EventSourcedHandler.handle_command(instance, message)
+    instance = message |> get_instance_id
+    result = EventSourcedHandler.handle_command(instance, message)
+    Logger.info("Response from Entity #{inspect result}")
   end
 
-  defp get_instance(msg), do: msg.entity_id
+  defp get_instance_id(msg), do: msg.entity_id
 end
