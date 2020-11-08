@@ -16,28 +16,10 @@ defmodule CloudState.EventSourced.Server do
         %EventSourcedStreamIn{message: {:command, _}} ->
           case handle_command(elem(chunk.message, 1)) do
             {:ok, result, context} ->
-              send_response(%{status: :ok, response: result, state: context}, stream)
-
-            {:emit, event, result, context} ->
-              send_response(
-                %{status: :emit, events: event, response: result, state: context},
-                stream
-              )
-
-            {:emit, event, forward, result, context} ->
-              send_response(
-                %{
-                  status: :emit,
-                  events: event,
-                  forwards: forward,
-                  response: result,
-                  state: context
-                },
-                stream
-              )
+              send_response(%{status: :ok, response: result, context: context}, stream)
 
             {:error, reason, context} ->
-              send_response(%{status: :error, result: reason, state: context}, stream)
+              send_response(%{status: :error, result: reason, context: context}, stream)
           end
 
         _ ->
@@ -46,23 +28,19 @@ defmodule CloudState.EventSourced.Server do
     end)
   end
 
-  defp send_response(%{status: :ok, response: _, state: _} = response, stream) do
-  end
-
-  defp send_response(%{status: :emit, events: _, response: _, state: _} = response, stream) do
+  defp send_response(%{status: :ok, response: _, context: _} = response, stream) do
     # Send response
-    reply = EventSourcedReply.new(command_id: 1)
-    out = EventSourcedStreamOut.new(reply: reply)
-    Server.send_reply(stream, out)
+    context = Map.get(response, :context)
+
+    if context.events != nil do
+      reply = EventSourcedReply.new(command_id: 1)
+      out = EventSourcedStreamOut.new(reply: reply)
+      Server.send_reply(stream, out)
+    end
+
   end
 
-  defp send_response(
-         %{status: :emit, events: _, forwards: _, response: _, state: _} = response,
-         stream
-       ) do
-  end
-
-  defp send_response(%{status: :error, result: _, state: _} = response, stream) do
+  defp send_response(%{status: :error, result: _, context: _} = response, stream) do
   end
 
   defp handle_init(message) do

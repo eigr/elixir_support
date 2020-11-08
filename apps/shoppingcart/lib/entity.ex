@@ -34,7 +34,7 @@ defmodule ShoppingCart.Entity do
             )
         )
 
-      {:emit, item, Empty.new(), context}
+      {:ok, Empty.new(), %{context | events: [item]}}
     end
   end
 end

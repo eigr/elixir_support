@@ -18,8 +18,6 @@ defmodule CloudState.EventSourced do
 
   @callback handle_command(service :: term, request :: term, context :: Context.t()) ::
               {:ok, result :: term, context :: Context.t()}
-              | {:emit, event :: term, result :: term, context :: Context.t()}
-              | {:emit, event :: term, forward :: term, result :: term, context :: Context.t()}
               | {:error, reason :: term, context :: Context.t()}
 
   @callback handle_event(event_type :: term, request :: term, context :: Context.t()) ::
@@ -32,9 +30,11 @@ defmodule CloudState.EventSourced do
             entity: any,
             persistence_id: String.t(),
             entity_id: integer,
+            events: [any],
+            forwards: [any],
             state: any
           }
 
-    defstruct [:name, :entity, :persistence_id, :entity_id, :state]
+    defstruct [:name, :entity, :persistence_id, :entity_id, :events, :forwards, :state]
   end
 end
