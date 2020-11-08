@@ -7,7 +7,7 @@ defmodule CloudStateElixirSupportTest do
   end
 
   test "ShoppingCart should contain single annotation if registered" do
-    #assert ShoppingCart.annotations().add == [
+    # assert ShoppingCart.annotations().add == [
     #         %{
     #           annotation: :command,
     #           value: %{
@@ -25,5 +25,4 @@ defmodule CloudStateElixirSupportTest do
     #         }
     #       ]
   end
-
 end

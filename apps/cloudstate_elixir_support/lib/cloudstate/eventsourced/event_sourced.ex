@@ -13,15 +13,28 @@ defmodule CloudState.EventSourced do
     end
   end
 
-  @callback init(state :: term) :: {:ok, new_state :: term} | {:error, reason :: term}
+  @callback init(context :: Context.t()) ::
+              {:ok, context_with_state :: Context.t()} | {:error, reason :: term}
 
-  @callback handle_command(service :: term, request :: term, state :: term) ::
-              {:ok, result :: term, state :: term}
-              | {:emit, event :: term, result :: term, state :: term}
-              | {:emit, event :: term, forward :: term, result :: term, state :: term}
-              | {:error, reason :: term, state :: term}
+  @callback handle_command(service :: term, request :: term, context :: Context.t()) ::
+              {:ok, result :: term, context :: Context.t()}
+              | {:emit, event :: term, result :: term, context :: Context.t()}
+              | {:emit, event :: term, forward :: term, result :: term, context :: Context.t()}
+              | {:error, reason :: term, context :: Context.t()}
 
-  @callback handle_event(event_type :: term, request :: term, state :: term) ::
-              {:ok, new_state :: term}
-              | {:error, reason :: term, state :: term}
+  @callback handle_event(event_type :: term, request :: term, context :: Context.t()) ::
+              {:ok, context_with_state :: Context.t()}
+              | {:error, reason :: term, context :: Context.t()}
+
+  defmodule Context do
+    @type t :: %__MODULE__{
+            name: String.t(),
+            entity: any,
+            persistence_id: String.t(),
+            entity_id: integer,
+            state: any
+          }
+
+    defstruct [:name, :entity, :persistence_id, :entity_id, :state]
+  end
 end

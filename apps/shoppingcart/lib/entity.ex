@@ -3,26 +3,26 @@ defmodule ShoppingCart.Entity do
   alias Google.Protobuf.Empty
 
   @impl true
-  def init(state), do: {:ok, state}
+  def init(context), do: {:ok, %{context | state: %{}}}
 
   @impl true
-  def handle_event(:item_added, _request, _state) do
-    # TODO: Do something and generate new_state
-    new_state = %{}
-    {:ok, new_state}
+  def handle_event(:item_added, _request, _context) do
+    # TODO: Do something and generate context_with_state
+    context_with_state = %{}
+    {:ok, context_with_state}
   end
 
   @impl true
-  def handle_command(:get_cart, _request, state) do
-    # TODO: Use state to create items in response
+  def handle_command(:get_cart, _request, context) do
+    # TODO: Use context.state to create items in response
     items = Shoppingcart.Cart.new(items: [])
-    {:ok, items, state}
+    {:ok, items, context}
   end
 
   @impl true
-  def handle_command(:add_item, request, state) do
+  def handle_command(:add_item, request, context) do
     if request.quantity <= 0 do
-      {:error, "Cannot add negative quantity of to item #{request.product_id}", state}
+      {:error, "Cannot add negative quantity of to item #{request.product_id}", context}
     else
       item =
         Domain.ItemAdded.new(
@@ -34,7 +34,7 @@ defmodule ShoppingCart.Entity do
             )
         )
 
-      {:emit, item, Empty.new(), state}
+      {:emit, item, Empty.new(), context}
     end
   end
 end
