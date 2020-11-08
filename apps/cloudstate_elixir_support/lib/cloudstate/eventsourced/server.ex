@@ -16,22 +16,53 @@ defmodule CloudState.EventSourced.Server do
         %EventSourcedStreamIn{message: {:command, _}} ->
           case handle_command(elem(chunk.message, 1)) do
             {:ok, result, context} ->
-              send_response(stream, result, context)
+              send_response(%{status: :ok, response: result, state: context}, stream)
 
             {:emit, event, result, context} ->
-              emit_events(stream, event, result, context)
+              send_response(
+                %{status: :emit, events: event, response: result, state: context},
+                stream
+              )
 
             {:emit, event, forward, result, context} ->
-              send_forwards(stream, event, forward, result, context)
+              send_response(
+                %{
+                  status: :emit,
+                  events: event,
+                  forwards: forward,
+                  response: result,
+                  state: context
+                },
+                stream
+              )
 
             {:error, reason, context} ->
-              send_error(stream, reason, context)
+              send_response(%{status: :error, result: reason, state: context}, stream)
           end
 
         _ ->
           Logger.info("No handler was found for this protocol message. Message #{chunk}")
       end
     end)
+  end
+
+  defp send_response(%{status: :ok, response: _, state: _} = response, stream) do
+  end
+
+  defp send_response(%{status: :emit, events: _, response: _, state: _} = response, stream) do
+    # Send response
+    reply = EventSourcedReply.new(command_id: 1)
+    out = EventSourcedStreamOut.new(reply: reply)
+    Server.send_reply(stream, out)
+  end
+
+  defp send_response(
+         %{status: :emit, events: _, forwards: _, response: _, state: _} = response,
+         stream
+       ) do
+  end
+
+  defp send_response(%{status: :error, result: _, state: _} = response, stream) do
   end
 
   defp handle_init(message) do
@@ -60,24 +91,6 @@ defmodule CloudState.EventSourced.Server do
   end
 
   defp get_entity_id(msg), do: msg.entity_id
-
-  defp send_error(stream, reason, context) do
-    # Send response
-    # Server.send_reply(stream, response)
-  end
-
-  defp send_response(stream, result, context) do
-    # Send response
-
-    # Server.send_reply(stream, response)
-  end
-
-  defp emit_events(stream, event, result, context) do
-    # Send response
-    reply = EventSourcedReply.new(command_id: 1)
-    response = EventSourcedStreamOut.new(reply: reply)
-    Server.send_reply(stream, response)
-  end
 
   defp send_forwards(stream, event, forward, result, context) do
     # Send response
