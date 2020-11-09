@@ -31,11 +31,22 @@ defmodule CloudState.EventSourced do
             persistence_id: String.t(),
             entity_id: integer,
             command_id: integer | nil,
-            events: [any],
-            forwards: [any],
+            events: [any] | nil,
+            forwards: [any] | nil,
+            side_effects: [any] | nil,
             state: any
           }
 
-    defstruct [:name, :entity, :persistence_id, :entity_id, :command_id, :events, :forwards, :state]
+    defstruct [
+      :name,
+      :entity,
+      :persistence_id,
+      :entity_id,
+      :command_id,
+      :events,
+      :forwards,
+      :side_effects,
+      :state
+    ]
   end
 end

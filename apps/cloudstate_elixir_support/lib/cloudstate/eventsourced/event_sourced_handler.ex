@@ -51,7 +51,9 @@ defmodule CloudState.EventSourcedHandler do
     request = payload |> get_type |> get_payload(payload.payload.value)
     command_id = payload.id
 
-    resul = apply(entity, :handle_command, [service, request, %{context | command_id: command_id}])
+    resul =
+      apply(entity, :handle_command, [service, request, %{context | command_id: command_id}])
+
     {:reply, resul, context}
   end
 
