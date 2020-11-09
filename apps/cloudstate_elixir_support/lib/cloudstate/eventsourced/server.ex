@@ -28,21 +28,6 @@ defmodule CloudState.EventSourced.Server do
     end)
   end
 
-  defp send_response(%{status: :ok, response: _, context: _} = response, stream) do
-    # Send response
-    context = Map.get(response, :context)
-
-    if context.events != nil do
-      reply = EventSourcedReply.new(command_id: 1)
-      out = EventSourcedStreamOut.new(reply: reply)
-      Server.send_reply(stream, out)
-    end
-
-  end
-
-  defp send_response(%{status: :error, result: _, context: _} = response, stream) do
-  end
-
   defp handle_init(message) do
     Logger.info("Incoming Init message #{inspect(message)}")
     entity_id = message |> get_entity_id
@@ -70,8 +55,17 @@ defmodule CloudState.EventSourced.Server do
 
   defp get_entity_id(msg), do: msg.entity_id
 
-  defp send_forwards(stream, event, forward, result, context) do
+  defp send_response(%{status: :ok, response: _, context: _} = response, stream) do
     # Send response
-    # Server.send_reply(stream, response)
+    context = Map.get(response, :context)
+
+    if context.events != nil do
+      reply = EventSourcedReply.new(command_id: 1)
+      out = EventSourcedStreamOut.new(reply: reply)
+      Server.send_reply(stream, out)
+    end
+  end
+
+  defp send_response(%{status: :error, result: _, context: _} = response, stream) do
   end
 end
