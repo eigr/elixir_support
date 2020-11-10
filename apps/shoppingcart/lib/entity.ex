@@ -15,7 +15,11 @@ defmodule ShoppingCart.Entity do
   @impl true
   def handle_command(:get_cart, _request, context) do
     # TODO: Use context.state to create items in response
-    items = Shoppingcart.Cart.new(items: [Shoppingcart.LineItem.new(product_id: "1", name: "Led Zeppelin", quantity: 10)])
+    items =
+      Shoppingcart.Cart.new(
+        items: [Shoppingcart.LineItem.new(product_id: "1", name: "Led Zeppelin", quantity: 10)]
+      )
+
     {:ok, items, context}
   end
 

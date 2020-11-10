@@ -24,7 +24,7 @@ defmodule CloudState.EventSourced.Server do
           end
 
         _ ->
-          Logger.info("No handler was found for this protocol message. Message #{chunk}")
+          Logger.info("No handler was found for this protocol message. Message #{inspect(chunk)}")
       end
     end)
   end
@@ -57,15 +57,13 @@ defmodule CloudState.EventSourced.Server do
   defp get_entity_id(msg), do: msg.entity_id
 
   defp send_response(%{status: :ok, response: _, context: _} = msg, stream) do
-    # Send response
-
     with {:ok, builder} <- create_reply_builder(msg),
          {:ok, action_builder} <- create_action(msg, builder),
          {:ok, events_builder} <- create_events(msg, action_builder),
-         {:ok, out} <- create_side_effects(msg, events_builder) do
-      # send complete response
-      Logger.info("Send response: #{inspect out}")
-      Server.send_reply(stream, out)
+         {:ok, effects_builder} <- create_side_effects(msg, events_builder),
+         {:ok, streamOut} <- create_response(effects_builder) do
+      Logger.info("Send response: #{inspect(streamOut)}")
+      Server.send_reply(stream, streamOut)
       # else
     end
   end
@@ -81,24 +79,31 @@ defmodule CloudState.EventSourced.Server do
 
     response =
       if response != nil do
-        # Todo here
-        event_module = response.__struct__ 
+        event_module = response.__struct__
         event_name = event_module |> to_string |> String.replace("Elixir.", "")
         values = event_module.encode(response) || []
 
-        Logger.info("Bytes of value: #{inspect values}")
+        any =
+          if "type.googleapis.com/#{event_name}" == "type.googleapis.com/Google.Protobuf.Empty" do
+            Google.Protobuf.Any.new(
+              type_url: "type.googleapis.com/google.protobuf.Empty",
+              value: :binary.bin_to_list(values)
+            )
+          else
+            Google.Protobuf.Any.new(
+              type_url: "type.googleapis.com/#{event_name}",
+              value: :binary.bin_to_list(values)
+            )
+          end
 
-        any = Google.Protobuf.Any.new(type_url: "type.googleapis.com/#{event_name}", value: :binary.bin_to_list(values))
         reply = Reply.new(payload: any)
         action = ClientAction.new(action: {:reply, reply})
-        #{:ok, %{builder | client_action: action}}
-        out = EventSourcedStreamOut.new(message: {:reply, %{builder | client_action: action}})
-        {:ok, out}
+        {:ok, %{builder | client_action: action}}
       else
         {:ok, builder}
       end
 
-      response
+    response
   end
 
   defp create_events(response, action_builder) do
@@ -106,9 +111,22 @@ defmodule CloudState.EventSourced.Server do
 
     if context.events != nil and List.first(context.events) != nil do
       # Todo handle events here
-    end
+      evts =
+        Enum.map(context.events, fn evt ->
+          event_module = evt.__struct__
+          event_name = event_module |> to_string |> String.replace("Elixir.", "")
+          values = event_module.encode(evt) || []
 
-    {:ok, action_builder}
+          Google.Protobuf.Any.new(
+            type_url: "type.googleapis.com/#{event_name}",
+            value: :binary.bin_to_list(values)
+          )
+        end)
+
+      {:ok, %{action_builder | events: evts}}
+    else
+      {:ok, action_builder}
+    end
   end
 
   defp create_side_effects(response, events_builder) do
@@ -116,7 +134,9 @@ defmodule CloudState.EventSourced.Server do
     {:ok, events_builder}
   end
 
-  defp create_response(message) do
+  defp create_response(builder) do
+    out = EventSourcedStreamOut.new(message: {:reply, builder})
+    {:ok, out}
   end
 
   defp send_response(%{status: :error, result: _, context: _} = response, stream) do
