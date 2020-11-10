@@ -2,7 +2,7 @@ defmodule CloudState.EventSourced.Server do
   use GRPC.Server, service: Cloudstate.Eventsourced.EventSourced.Service
   require Logger
   alias GRPC.Server
-  alias Cloudstate.{ClientAction, Reply, Forward, Failure}
+  alias Cloudstate.{ClientAction, Reply}
   alias CloudState.{EventSourcedEntitySupervisor, EventSourcedHandler}
   alias Cloudstate.Eventsourced.{EventSourcedStreamIn, EventSourcedStreamOut, EventSourcedReply}
 
@@ -68,13 +68,16 @@ defmodule CloudState.EventSourced.Server do
     end
   end
 
+  defp send_response(%{status: :error, result: _, context: _} = _response, _stream) do
+  end
+
   defp create_reply_builder(msg) do
     context = Map.get(msg, :context)
     {:ok, EventSourcedReply.new(command_id: context.command_id)}
   end
 
   defp create_action(msg, builder) do
-    context = Map.get(msg, :context)
+    _context = Map.get(msg, :context)
     response = Map.get(msg, :response)
 
     response =
@@ -130,15 +133,12 @@ defmodule CloudState.EventSourced.Server do
   end
 
   defp create_side_effects(response, events_builder) do
-    context = Map.get(response, :context)
+    _context = Map.get(response, :context)
     {:ok, events_builder}
   end
 
   defp create_response(builder) do
     out = EventSourcedStreamOut.new(message: {:reply, builder})
     {:ok, out}
-  end
-
-  defp send_response(%{status: :error, result: _, context: _} = response, stream) do
   end
 end

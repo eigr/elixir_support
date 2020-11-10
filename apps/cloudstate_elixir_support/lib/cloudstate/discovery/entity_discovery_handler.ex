@@ -21,6 +21,7 @@ defmodule CloudState.EntityDiscoveryHandler do
   end
 
   # Client functions
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end

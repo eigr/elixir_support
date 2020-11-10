@@ -16,24 +16,30 @@ defmodule CloudState.EventSourcedHandler do
   @event_sourced_registry :event_sourced_entities_registry
 
   # Cliet API
+  @spec start_link(atom | %{entity_id: any}) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(context),
     do: GenServer.start_link(__MODULE__, context, name: via_tuple(context.entity_id))
 
+  @spec handle_init(any, any) :: any
   def handle_init(entity_id, payload),
     do: GenServer.call(via_tuple(entity_id), {:init, payload})
 
+  @spec handle_command(any, any) :: any
   def handle_command(entity_id, payload),
     do: GenServer.call(via_tuple(entity_id), {:command, payload})
 
+  @spec handle_event(any, any) :: any
   def handle_event(entity_id, payload),
     do: GenServer.call(via_tuple(entity_id), {:event, payload})
 
+  @spec handle_snapshot(any, any) :: any
   def handle_snapshot(entity_id, payload),
     do: GenServer.call(via_tuple(entity_id), {:snapshot, payload})
 
   # Server Callbacks
 
   @impl true
+  @spec init(atom | %{entity: any}) :: any
   def init(context), do: initialize(context)
 
   @impl true

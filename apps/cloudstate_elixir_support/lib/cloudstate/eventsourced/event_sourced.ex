@@ -7,6 +7,9 @@ defmodule CloudState.EventSourced do
     end
   end
 
+  @spec __before_compile__(any) ::
+          {:def, [{:context, CloudState.EventSourced} | {:import, Kernel}, ...],
+           [[{any, any}, ...] | {:get_entity_type, [...], CloudState.EventSourced}, ...]}
   defmacro __before_compile__(_env) do
     quote do
       def get_entity_type, do: @entity_type

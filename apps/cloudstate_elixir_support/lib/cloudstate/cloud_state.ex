@@ -3,11 +3,13 @@ defmodule CloudState.Supervisor do
 
   @event_sourced_registry :event_sourced_entities_registry
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts)
   end
 
   @impl true
+  @spec init(any) :: none
   def init(opts) do
     # This is a Hack to force the gRPC library to start as a server
     Application.put_env(:grpc, :start_server, true)

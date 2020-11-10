@@ -3,9 +3,11 @@ defmodule ShoppingCart.Entity do
   alias Google.Protobuf.Empty
 
   @impl true
+  @spec init(%{state: any}) :: {:ok, %{state: %{}}}
   def init(context), do: {:ok, %{context | state: %{}}}
 
   @impl true
+  @spec handle_event(:item_added, any, any) :: {:ok, %{}}
   def handle_event(:item_added, _request, _context) do
     # TODO: Do something and generate context_with_state
     context_with_state = %{}
@@ -13,6 +15,8 @@ defmodule ShoppingCart.Entity do
   end
 
   @impl true
+  @spec handle_command(:add_item | :get_cart, any, any) ::
+          {:error, <<_::64, _::_*8>>, any} | {:ok, any, any}
   def handle_command(:get_cart, _request, context) do
     # TODO: Use context.state to create items in response
     items =
